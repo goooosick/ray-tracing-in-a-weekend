@@ -5,11 +5,13 @@ pub use ray::Ray;
 pub use vec::Vec3;
 pub use hitable::*;
 pub use sphere::Sphere;
+pub use camera::Camera;
 
 mod vec;
 mod ray;
 mod hitable;
 mod sphere;
+mod camera;
 
 /// convert Vec3 to RGB8([u8; 3])
 pub fn vec_to_rgb(c: Color) -> [u8; 3] {

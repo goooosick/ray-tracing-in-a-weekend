@@ -9,3 +9,5 @@ name = "rtw"
 
 [dependencies]
 image = "0.22.1"
+rand = "0.7.0"
+rayon = "1.1.0"

@@ -1,4 +1,4 @@
-use super::Vec3;
+use crate::Vec3;
 
 /// ray with origin and direction
 #[derive(PartialEq)]

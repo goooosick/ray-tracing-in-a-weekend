@@ -1,5 +1,5 @@
-use crate::vec::Vec3;
-use crate::ray::Ray;
+use crate::Vec3;
+use crate::Ray;
 
 /// record for ray object intersection
 #[derive(Debug)]
@@ -20,18 +20,20 @@ pub trait Hitable {
 
 /// a list of hitable objects
 #[derive(Default)]
-pub struct HitableList {
-    list: Vec<Box<Hitable>>
+pub struct HitableList<'a> {
+    list: Vec<Box<Hitable + 'a>>
 }
 
-impl HitableList {
+unsafe impl<'a> Sync for HitableList<'a> {}
+
+impl<'a> HitableList<'a> {
     /// add a hitable object
-    pub fn push<T: 'static + Hitable>(&mut self, hitable: T) {
+    pub fn push<T: 'a + Hitable>(&mut self, hitable: T) {
         self.list.push(Box::new(hitable));
     }
 }
 
-impl Hitable for HitableList {
+impl<'a> Hitable for HitableList<'a> {
     fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         self.list
             .iter()

@@ -265,6 +265,12 @@ impl IndexMut<usize> for Vec3 {
     }
 }
 
+impl std::iter::Sum for Vec3 {
+    fn sum<I: Iterator<Item=Vec3>>(iter: I) -> Vec3 {
+        iter.fold(Vec3::zero(), |a, b| a + b)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

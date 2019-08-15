@@ -1,6 +1,6 @@
-use crate::ray::Ray;
-use crate::vec::Vec3;
-use crate::hitable::{HitRecord, Hitable};
+use crate::Ray;
+use crate::Vec3;
+use crate::{HitRecord, Hitable};
 
 /// sphere hitable object
 #[derive(Debug)]

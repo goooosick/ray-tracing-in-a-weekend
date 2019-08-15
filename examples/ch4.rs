@@ -1,6 +1,10 @@
 use rtw::*;
 
 fn color(ray: &Ray) -> Color {
+    if hit_sphere(Vec3::new(0.0, 0.0, -1.0), 0.5, ray) {
+        return Color::new(1.0, 0.0, 0.0);
+    }
+
     let unit_dir = ray.direction.normalize();
     let t = 0.5 * (unit_dir.y + 1.0);
     
@@ -10,6 +14,16 @@ fn color(ray: &Ray) -> Color {
 fn vec_to_rgb(c: Color) -> [u8; 3] {
     let c = c.clamp(0.0, 1.0) * 255.99;
     [c[0] as u8, c[1] as u8, c[2] as u8]
+}
+
+fn hit_sphere(center: Vec3, radius: f32, ray: &Ray) -> bool {
+    let oc = ray.origin - center;
+    let coeff_a = ray.direction.dot(ray.direction);
+    let coeff_b = 2.0 * oc.dot(ray.direction);
+    let coeff_c = oc.dot(oc) - radius * radius;
+    let discriminant = coeff_b * coeff_b - 4.0 * coeff_a * coeff_c;
+
+    discriminant > 0.0
 }
 
 fn main() {
@@ -34,5 +48,5 @@ fn main() {
         *pixel = image::Rgb(vec_to_rgb(c));
     }
 
-    imgbuf.save("ch3.png").unwrap();
+    imgbuf.save("ch4.png").unwrap();
 }

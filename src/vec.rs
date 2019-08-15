@@ -69,6 +69,22 @@ impl Vec3 {
             z: self.z.max(a).min(b),
         }
     }
+
+    /// dot product
+    pub fn dot(&self, other: Vec3) -> f32 {
+        self.x * other.x + 
+        self.y * other.y +
+        self.z * other.z
+    }
+
+    /// cross product
+    pub fn cross(&self, other: Vec3) -> Vec3 {
+        Vec3 {
+            x: self.y * other.z - self.z * other.y,
+            y: self.z * other.x - self.x * other.z,
+            z: self.x * other.y - self.y * other.x,
+        }
+    }
 }
 
 impl Neg for Vec3 {
@@ -209,21 +225,19 @@ impl Div<f32> for Vec3 {
     type Output = Self;
 
     fn div(self, rhs: f32) -> Self::Output {
-        let t = 1.0 / rhs;
         Vec3 {
-            x: self.x * t,
-            y: self.y * t,
-            z: self.z * t,
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
         }
     }
 }
 
 impl DivAssign<f32> for Vec3 {
     fn div_assign(&mut self, rhs: f32) {
-        let t = 1.0 / rhs;
-        self.x /= t;
-        self.y /= t;
-        self.z /= t;
+        self.x /= rhs;
+        self.y /= rhs;
+        self.z /= rhs;
     }
 }
 
@@ -296,5 +310,20 @@ mod test {
         assert_eq!(v1[0], -1.0);
         assert_eq!(v1[1], 0.99);
         assert_eq!(v1[2], 2.3);
+    }
+
+    #[test]
+    fn test_dot() {
+        let v1 = Vec3::new(1.0, 2.0, 3.0);
+        let v2 = Vec3::new(2.0, 3.0, 4.0);
+        assert_eq!(20.0, v1.dot(v2));
+    }
+
+    #[test]
+    fn test_cross() {
+        let v1 = Vec3::new(0.0, 0.0, 1.0);
+        let v2 = Vec3::new(1.0, 0.0, 0.0);
+        let v3 = Vec3::new(0.0, 1.0, 0.0);
+        assert_eq!(v3, v1.cross(v2));
     }
 }

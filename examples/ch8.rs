@@ -2,9 +2,16 @@ use rtw::*;
 use rand::prelude::*;
 use rayon::prelude::*;
 
-fn color(ray: &Ray, hitable: &HitableList) -> Color {
-    if let Some(rec) = hitable.hit(&ray, 0.0, std::f32::MAX) {
-        0.5 * (rec.normal + Vec3::unit())
+fn color(ray: &Ray, hitable: &HitableList, depth: u32) -> Color {
+    if let Some(rec) = hitable.hit(&ray, 0.001, std::f32::MAX) {
+        if depth < 50 {
+            if let Some(srec) = rec.material.scatter(ray, &rec) {
+                return srec.attenuation *
+                    color(&srec.scattered, hitable, depth + 1);
+            }
+        }
+        
+        Vec3::zero()
     } else {
         let unit_dir = ray.direction.normalize();
         let t = 0.5 * (unit_dir.y + 1.0);
@@ -24,7 +31,11 @@ fn main() {
     list.push(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5,
                 Box::new(Lambertian::new(Vec3::new(0.8, 0.3, 0.3)))));
     list.push(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0,
-                Box::new(Lambertian::new(Vec3::new(0.8, 0.3, 0.3)))));
+                Box::new(Lambertian::new(Vec3::new(0.8, 0.8, 0.0)))));
+    list.push(Sphere::new(Vec3::new(1.0, 0.0, -1.0), 0.5,
+                Box::new(Metal::new(Vec3::new(0.8, 0.6, 0.2), 0.3))));
+    list.push(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), 0.5,
+                Box::new(Metal::new(Vec3::new(0.8, 0.8, 0.8), 1.0))));
 
     let cam = Camera::new(
         Vec3::new(0.0, 0.0, 0.0),
@@ -45,12 +56,13 @@ fn main() {
                 let v = (v + thread_rng().gen::<f32>()) / ny as f32;
                 let ray = cam.get_ray(u, v);
 
-                color(&ray, &list)
+
+                color(&ray, &list, 0)
             })
             .sum::<Color>() / ns as f32;
 
         *pixel = image::Rgb(vec_to_rgb(c));
     }
 
-    imgbuf.save("ch6.png").unwrap();
+    imgbuf.save("ch8.png").unwrap();
 }

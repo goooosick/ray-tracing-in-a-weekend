@@ -1,15 +1,17 @@
 use crate::Vec3;
 use crate::Ray;
+use crate::Material;
 
 /// record for ray object intersection
-#[derive(Debug)]
-pub struct HitRecord {
+pub struct HitRecord<'a> {
     /// ray distance
     pub t: f32,
     /// hit point
     pub point: Vec3,
     /// surface normal on hit point
     pub normal: Vec3,
+    /// material pointer
+    pub material: &'a dyn Material,
 }
 
 /// hitable object trait
@@ -21,9 +23,10 @@ pub trait Hitable {
 /// a list of hitable objects
 #[derive(Default)]
 pub struct HitableList<'a> {
-    list: Vec<Box<Hitable + 'a>>
+    list: Vec<Box<dyn Hitable + 'a>>
 }
 
+// MAIGC
 unsafe impl<'a> Sync for HitableList<'a> {}
 
 impl<'a> HitableList<'a> {

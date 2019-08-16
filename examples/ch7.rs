@@ -22,8 +22,10 @@ fn main() {
     let mut imgbuf = image::ImageBuffer::new(nx, ny);
 
     let mut list = HitableList::default();
-    list.push(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5));
-    list.push(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0));
+    list.push(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5,
+                Box::new(Lambertian::new(Vec3::new(0.8, 0.3, 0.3)))));
+    list.push(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0,
+                Box::new(Lambertian::new(Vec3::new(0.8, 0.3, 0.3)))));
 
     let cam = Camera::new(
         Vec3::new(0.0, 0.0, 0.0),

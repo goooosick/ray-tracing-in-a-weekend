@@ -1,20 +1,21 @@
 use crate::Ray;
 use crate::Vec3;
-use crate::{HitRecord, Hitable};
+use crate::{HitRecord, Hitable, Material};
 
 /// sphere hitable object
-#[derive(Debug)]
 pub struct Sphere {
     center: Vec3,
     radius: f32,
+    material: Box<dyn Material>,
 }
 
 impl Sphere {
     /// construct new sphere with `center` and `radius`
-    pub fn new(center: Vec3, radius: f32) -> Self {
+    pub fn new(center: Vec3, radius: f32, material: Box<dyn Material>) -> Self {
         Sphere {
             center,
             radius,
+            material
         }
     }
 }
@@ -33,7 +34,8 @@ impl Hitable for Sphere {
                 return Some(HitRecord {
                     t: temp,
                     point: ray.point_at(temp),
-                    normal: (ray.point_at(temp) - self.center) / self.radius
+                    normal: (ray.point_at(temp) - self.center) / self.radius,
+                    material: self.material.as_ref()
                 });
             }
 
@@ -42,7 +44,8 @@ impl Hitable for Sphere {
                 return Some(HitRecord {
                     t: temp,
                     point: ray.point_at(temp),
-                    normal: (ray.point_at(temp) - self.center) / self.radius
+                    normal: (ray.point_at(temp) - self.center) / self.radius,
+                    material: self.material.as_ref()
                 });
             }
         }

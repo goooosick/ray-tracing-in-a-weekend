@@ -2,16 +2,18 @@
 pub type Color = vec::Vec3;
 
 pub use ray::Ray;
-pub use vec::Vec3;
+pub use vec::{Vec3, reflect};
 pub use hitable::*;
 pub use sphere::Sphere;
 pub use camera::Camera;
+pub use material::*;
 
 mod vec;
 mod ray;
 mod hitable;
 mod sphere;
 mod camera;
+mod material;
 
 /// convert Vec3 to RGB8([u8; 3])
 pub fn vec_to_rgb(c: Color) -> [u8; 3] {

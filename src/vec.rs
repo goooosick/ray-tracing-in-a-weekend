@@ -87,6 +87,11 @@ impl Vec3 {
     }
 }
 
+/// reflect incident ray `v` with surface normal `n`
+pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
+    v - 2.0 * v.dot(n) * n
+}
+
 impl Neg for Vec3 {
     type Output = Vec3;
 

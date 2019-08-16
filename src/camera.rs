@@ -15,7 +15,7 @@ impl Camera {
     /// horizontal stretch and vertical stretch.
     pub fn new(origin: Vec3, corner: Vec3, horiz: Vec3, verti: Vec3) -> Self {
         Camera {
-            origin: origin,
+            origin,
             lower_left_corner: corner,
             horizontal: horiz,
             vertical: verti,

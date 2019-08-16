@@ -23,8 +23,10 @@ fn main() {
     let origin = Vec3::new(0.0, 0.0, 0.0);
 
     let mut list = HitableList::default();
-    list.push(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5));
-    list.push(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0));
+    list.push(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5,
+                Box::new(Lambertian::new(Vec3::new(0.8, 0.3, 0.3)))));
+    list.push(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0,
+                Box::new(Lambertian::new(Vec3::new(0.8, 0.3, 0.3)))));
 
     for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
         let u = x as f32 / nx as f32;

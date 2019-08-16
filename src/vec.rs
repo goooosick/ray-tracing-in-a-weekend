@@ -92,6 +92,18 @@ pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
     v - 2.0 * v.dot(n) * n
 }
 
+/// refract ray when possible
+pub fn refract(v: Vec3, n: Vec3, ni_over_nt: f32) -> Option<Vec3> {
+    let uv = v.normalize();
+    let dt = uv.dot(n);
+    let discriminant = 1.0 - ni_over_nt * ni_over_nt * (1.0 - dt * dt);
+
+    match discriminant > 0.0 {
+        true => Some(ni_over_nt * (uv - n * dt) - n * discriminant.sqrt()),
+        false => None
+    }
+}
+
 impl Neg for Vec3 {
     type Output = Vec3;
 

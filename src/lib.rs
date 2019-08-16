@@ -40,3 +40,18 @@ pub fn random_in_unit_sphere() -> Vec3 {
         }
     }
 }
+
+/// generate random point in unit disk
+pub fn random_in_unit_disk() -> Vec3 {
+    use rand::prelude::*;
+
+    let mut rng = rand::thread_rng();
+    loop {
+        let p = Vec3::new(rng.gen::<f32>(), rng.gen::<f32>(), 0.0);
+        let p = 2.0 * p - Vec3::new(1.0, 1.0, 0.0);
+
+        if p.norm_squared() <= 1.0 {
+            return p;
+        }
+    }
+}

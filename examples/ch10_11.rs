@@ -39,11 +39,13 @@ fn main() {
     list.push(Sphere::new(Vec3::new(-1.0, 0.0, -1.0), -0.45,
                 Box::new(Dielectric::new(1.5))));
 
-    let cam = Camera::new(
-        Vec3::new(0.0, 0.0, 0.0),
-        Vec3::new(0.0, 0.0, -1.0),
-        Vec3::new(0.0, 1.0, 0.0),
-        90.0, 2.0, 0.0, 1.0);
+    let look_from = Vec3::new(3.0, 3.0, 2.0);
+    let look_at = Vec3::new(0.0, 0.0, -1.0);
+    let view_up = Vec3::new(0.0, 1.0, 0.0);
+
+    let cam = Camera::new(look_from, look_at, view_up,
+        20.0, nx as f32 / ny as f32,
+        2.0, (look_from - look_at).norm());
 
     let sample_range = (0..ns).collect::<Vec<_>>();
 
@@ -65,5 +67,5 @@ fn main() {
         *pixel = image::Rgb(vec_to_rgb(c));
     }
 
-    imgbuf.save("ch9.png").unwrap();
+    imgbuf.save("ch10_11.png").unwrap();
 }

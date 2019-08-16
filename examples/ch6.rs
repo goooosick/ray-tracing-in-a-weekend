@@ -28,10 +28,9 @@ fn main() {
 
     let cam = Camera::new(
         Vec3::new(0.0, 0.0, 0.0),
-        Vec3::new(-2.0, -1.0, -1.0),
-        Vec3::new(4.0, 0.0, 0.0),
-        Vec3::new(0.0, 2.0, 0.0)
-    );
+        Vec3::new(0.0, 0.0, -1.0),
+        Vec3::new(0.0, 1.0, 0.0),
+        90.0, 2.0, 0.0, 1.0);
 
     let sample_range = (0..ns).collect::<Vec<_>>();
 

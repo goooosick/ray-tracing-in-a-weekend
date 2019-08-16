@@ -97,7 +97,7 @@ impl Material for Dielectric {
         let reflected = reflect(ray.direction, rec.normal);
         let attenuation = Vec3::new(1.0, 1.0, 1.0);
 
-        let cos = ray.direction.dot(rec.normal) / ray.direction.norm_squared();
+        let cos = ray.direction.dot(rec.normal) / ray.direction.norm();
 
         let (out_normal, ni_over_nt, cosine) = {
             match ray.direction.dot(rec.normal) > 0.0 {
@@ -125,6 +125,7 @@ impl Material for Dielectric {
 }
 
 /// schlick approximation
+/// see: https://www.youtube.com/watch?v=iKNSPETJNgo
 fn schlick(cosine: f32, ref_index: f32) -> f32 {
     let r0 = (1.0 - ref_index) / (1.0 + ref_index);
     let r0 = r0 * r0;

@@ -3,7 +3,7 @@ use crate::random_in_unit_sphere;
 use crate::{reflect, refract};
 
 /// object material trait
-pub trait Material {
+pub trait Material: Sync {
     /// material scatters incident ray
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<ScatterRecord>;
 }

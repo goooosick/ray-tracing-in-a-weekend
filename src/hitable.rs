@@ -15,7 +15,7 @@ pub struct HitRecord<'a> {
 }
 
 /// hitable object trait
-pub trait Hitable {
+pub trait Hitable: Sync {
     /// test ray object intersection constrained  by `t_min` and `t_max`
     fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord>;
 }
@@ -25,9 +25,6 @@ pub trait Hitable {
 pub struct HitableList<'a> {
     list: Vec<Box<dyn Hitable + 'a>>
 }
-
-// MAIGC
-unsafe impl<'a> Sync for HitableList<'a> {}
 
 impl<'a> HitableList<'a> {
     /// add a hitable object

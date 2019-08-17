@@ -2,8 +2,6 @@ use rtw::*;
 use rand::prelude::*;
 use rayon::prelude::*;
 
-use std::time::Instant;
-
 fn color(ray: &Ray, hitable: &HitableList, depth: u32) -> Color {
     if let Some(rec) = hitable.hit(&ray, 0.001, std::f32::MAX) {
         if depth < 50 {
@@ -81,8 +79,8 @@ fn build_scene(n: i32) -> HitableList<'static> {
 }
 
 fn main() {
-    let nx = 800;
-    let ny = 600;
+    let nx = 200;
+    let ny = 100;
     let ns = 100;
 
     let mut imgbuf = image::ImageBuffer::new(nx, ny);
@@ -98,8 +96,6 @@ fn main() {
         0.1, 10.0);
 
     let sample_range = (0..ns).collect::<Vec<_>>();
-
-    let start = Instant::now();
 
     for (x, y, pixel) in imgbuf.enumerate_pixels_mut() {
         let u = x as f32;
@@ -118,8 +114,6 @@ fn main() {
 
         *pixel = image::Rgb(vec_to_rgb(c));
     }
-
-    println!("rendered in {:0.2} s", start.elapsed().as_millis() as f64 / 1000.0);
 
     imgbuf.save("ch12.png").unwrap();
 }

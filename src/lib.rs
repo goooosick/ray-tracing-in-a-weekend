@@ -16,6 +16,7 @@ mod vec;
 mod ray;
 mod camera;
 
+pub mod accel;
 pub mod material;
 pub mod shape;
 

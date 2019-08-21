@@ -1,5 +1,5 @@
 use crate::{Vec3, Ray, Hitable, Material};
-use crate::shape::{HitRecord};
+use crate::shape::{HitRecord, AABB};
 
 /// a moving sphere hitable object
 pub struct MovingSphere {
@@ -63,5 +63,18 @@ impl Hitable for MovingSphere {
         }
 
         None
+    }
+
+    fn bounding_box(&self, t0: f32, t1: f32) -> Option<AABB> {
+        let box0 = AABB::new(
+            self.center(t0) - Vec3::new(self.radius, self.radius, self.radius),
+            self.center(t0) + Vec3::new(self.radius, self.radius, self.radius),
+        );
+        let box1 = AABB::new(
+            self.center(t1) - Vec3::new(self.radius, self.radius, self.radius),
+            self.center(t1) + Vec3::new(self.radius, self.radius, self.radius),
+        );
+
+        Some(AABB::surrouding(box0, box1))
     }
 }

@@ -1,6 +1,8 @@
 use crate::Vec3;
 use crate::Ray;
 use crate::Material;
+use crate::accel::AABB;
+use crate::accel::accumulate_aabbs;
 
 pub use sphere::Sphere;
 pub use moving_sphere::MovingSphere;
@@ -24,6 +26,8 @@ pub struct HitRecord<'a> {
 pub trait Hitable: Sync {
     /// test ray object intersection constrained  by `t_min` and `t_max`
     fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord>;
+    /// get aabb of object in time t0-t1
+    fn bounding_box(&self, t0: f32, t1: f32) -> Option<AABB>;
 }
 
 /// a list of hitable objects
@@ -37,6 +41,11 @@ impl<'a> HitableList<'a> {
     pub fn push<T: 'a + Hitable>(&mut self, hitable: T) {
         self.list.push(Box::new(hitable));
     }
+
+    /// convert into vector of objects
+    pub fn to_vec(self) -> Vec<Box<dyn Hitable + 'a>> {
+        self.list
+    }
 }
 
 impl<'a> Hitable for HitableList<'a> {
@@ -46,5 +55,9 @@ impl<'a> Hitable for HitableList<'a> {
             .filter_map(|h| h.hit(ray, t_min, t_max))
             // .filter(|t| !t.is_nan())
             .min_by(|h1, h2| h1.t.partial_cmp(&h2.t).unwrap())
+    }
+
+    fn bounding_box(&self, t_min: f32, t_max: f32) -> Option<AABB> {
+        accumulate_aabbs(&self.list, t_min, t_max)
     }
 }

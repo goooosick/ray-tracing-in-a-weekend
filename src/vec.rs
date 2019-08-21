@@ -85,6 +85,34 @@ impl Vec3 {
             z: self.x * other.y - self.y * other.x,
         }
     }
+
+    /// max component
+    pub fn max_component(&self) -> f32 {
+        self.x.max(self.y).max(self.z)
+    }
+
+    /// min component
+    pub fn min_component(&self) -> f32 {
+        self.x.min(self.y).min(self.z)
+    }
+
+    /// maximum component-wise
+    pub fn max(&self, other: Vec3) -> Vec3 {
+        Vec3 {
+            x: self.x.max(other.x),
+            y: self.y.max(other.y),
+            z: self.z.max(other.z),
+        }
+    }
+
+    /// minimum component-wise
+    pub fn min(&self, other: Vec3) -> Vec3 {
+        Vec3 {
+            x: self.x.min(other.x),
+            y: self.y.min(other.y),
+            z: self.z.min(other.z),
+        }
+    }
 }
 
 impl Neg for Vec3 {

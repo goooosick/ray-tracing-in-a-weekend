@@ -1,10 +1,10 @@
 use rand::prelude::*;
 use rayon::prelude::*;
-use rtw::{*, shape::*, material::*};
+use rtw::{*, shape::*, material::*, accel::BVH};
 
 use std::time::Instant;
 
-fn color(ray: &Ray, hitable: &HitableList, depth: u32) -> Color {
+fn color(ray: &Ray, hitable: &dyn Hitable, depth: u32) -> Color {
     if let Some(rec) = hitable.hit(&ray, 0.001, std::f32::MAX) {
         if depth < 50 {
             if let Some(srec) = rec.material.scatter(ray, &rec) {
@@ -89,9 +89,8 @@ fn main() {
     let ny = 200;
     let ns = 100;
 
-    let mut imgbuf = image::ImageBuffer::new(nx, ny);
-
-    let list = build_scene(5);
+    let time_start = 0.0;
+    let time_end = 0.0;
 
     let look_from = Vec3::new(13.0, 2.0, 3.0);
     let look_at = Vec3::new(0.0, 0.0, 0.0);
@@ -99,7 +98,13 @@ fn main() {
 
     let cam = Camera::new(look_from, look_at, view_up, 20.0, nx as f32 / ny as f32)
         .apture(0.0, 10.0)
-        .period(0.0, 1.0);
+        .period(time_start, time_end);
+
+    let world = BVH::from_list(
+        build_scene(10),
+        time_start, time_end);
+
+    let mut imgbuf = image::ImageBuffer::new(nx, ny);
 
     let sample_range = (0..ns).collect::<Vec<_>>();
 
@@ -115,8 +120,7 @@ fn main() {
                 let v = (v + thread_rng().gen::<f32>()) / ny as f32;
                 let ray = cam.get_ray(u, v);
 
-
-                color(&ray, &list, 0)
+                color(&ray, &world, 0)
             })
             .sum::<Color>() / ns as f32;
 

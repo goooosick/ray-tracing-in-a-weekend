@@ -47,12 +47,16 @@ fn build_scene(n: i32) -> HitableList<'static> {
             if (center - Vec3::new(4.0, 0.2, 0.0)).norm() > 0.9 {
                 if prob < 0.8 {
                     // diffuse
-                    list.push(Sphere::new(center, 0.2,
+                    list.push(MovingSphere::new(
+                        center, Vec3::new(0.0, 0.5 * randf(), 0.0),
+                        0.0, 1.0,
+                        0.2,
                         Box::new(Lambertian::new(Vec3::new(
                             randf() * randf(),
                             randf() * randf(),
                             randf() * randf(),
-                        )))));
+                        ))
+                    )));
                 } else if prob < 0.95 {
                     // metal
                     list.push(Sphere::new(center, 0.2,
@@ -81,20 +85,21 @@ fn build_scene(n: i32) -> HitableList<'static> {
 }
 
 fn main() {
-    let nx = 400;
+    let nx = 500;
     let ny = 200;
-    let ns = 20;
+    let ns = 100;
 
     let mut imgbuf = image::ImageBuffer::new(nx, ny);
 
-    let list = build_scene(11);
+    let list = build_scene(5);
 
     let look_from = Vec3::new(13.0, 2.0, 3.0);
     let look_at = Vec3::new(0.0, 0.0, 0.0);
     let view_up = Vec3::new(0.0, 1.0, 0.0);
 
     let cam = Camera::new(look_from, look_at, view_up, 20.0, nx as f32 / ny as f32)
-        .apture(0.1, 10.0);
+        .apture(0.0, 10.0)
+        .period(0.0, 1.0);
 
     let sample_range = (0..ns).collect::<Vec<_>>();
 

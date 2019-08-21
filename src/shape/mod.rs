@@ -3,8 +3,10 @@ use crate::Ray;
 use crate::Material;
 
 pub use sphere::Sphere;
+pub use moving_sphere::MovingSphere;
 
 mod sphere;
+mod moving_sphere;
 
 /// record for ray object intersection
 pub struct HitRecord<'a> {

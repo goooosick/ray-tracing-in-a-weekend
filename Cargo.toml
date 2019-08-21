@@ -1,0 +1,13 @@
+[package]
+name = "ray-tracing-in-a-weekend"
+version = "0.1.0"
+authors = ["Gosick"]
+edition = "2018"
+
+[lib]
+name = "rtw"
+
+[dependencies]
+image = "0.22.1"
+rand = "0.7.0"
+rayon = "1.1.0"

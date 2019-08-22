@@ -1,6 +1,10 @@
-use crate::{Ray, Vec3};
-use crate::shape::HitRecord;
 use crate::random_in_unit_sphere;
+use crate::shape::HitRecord;
+use crate::{Ray, Vec3};
+
+pub use texture::*;
+
+mod texture;
 
 /// reflect incident ray `v` with surface normal `n`
 pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
@@ -15,7 +19,7 @@ pub fn refract(v: Vec3, n: Vec3, ni_over_nt: f32) -> Option<Vec3> {
 
     match discriminant > 0.0 {
         true => Some(ni_over_nt * (uv - n * dt) - n * discriminant.sqrt()),
-        false => None
+        false => None,
     }
 }
 
@@ -35,25 +39,30 @@ pub trait Material: Sync {
 
 /// lambertian material, scattering ray to random direction and attenuating
 #[derive(Clone)]
-pub struct Lambertian {
+pub struct Lambertian<T> {
     /// lambertian material attenuation
-    pub albedo: Vec3
+    pub albedo: Box<T>,
 }
 
-impl Lambertian {
+impl<T> Lambertian<T> {
     /// construct new lambertian material
-    pub fn new(albedo: Vec3) -> Self {
-        Lambertian { albedo }
+    pub fn new(albedo: T) -> Self {
+        Lambertian {
+            albedo: Box::new(albedo),
+        }
     }
 }
 
-impl Material for Lambertian {
+impl<T> Material for Lambertian<T>
+where
+    T: Texture,
+{
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
         let target = rec.point + rec.normal + random_in_unit_sphere();
-        
+
         Some(ScatterRecord {
             scattered: Ray::new(rec.point, target - rec.point, ray.time),
-            attenuation: self.albedo,
+            attenuation: self.albedo.value(0.0, 0.0, rec.point),
         })
     }
 }
@@ -72,15 +81,15 @@ impl Metal {
     pub fn new(albedo: Vec3, fuzz: f32) -> Self {
         Metal {
             albedo,
-            fuzz: fuzz.min(1.0)
+            fuzz: fuzz.min(1.0),
         }
     }
 }
 
 impl Material for Metal {
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
-        let reflected = reflect(ray.direction.normalize(), rec.normal) +
-                        self.fuzz * random_in_unit_sphere();
+        let reflected =
+            reflect(ray.direction.normalize(), rec.normal) + self.fuzz * random_in_unit_sphere();
 
         if reflected.dot(rec.normal) > 0.0 {
             Some(ScatterRecord {
@@ -119,7 +128,7 @@ impl Material for Dielectric {
         let (out_normal, ni_over_nt, cosine) = {
             match ray.direction.dot(rec.normal) > 0.0 {
                 true => (-rec.normal, self.ref_index, self.ref_index * cos),
-                false => (rec.normal, self.ref_index.recip(), -cos)
+                false => (rec.normal, self.ref_index.recip(), -cos),
             }
         };
 
@@ -129,14 +138,14 @@ impl Material for Dielectric {
             if thread_rng().gen::<f32>() > reflect_prob {
                 return Some(ScatterRecord {
                     scattered: Ray::new(rec.point, refracted, ray.time),
-                    attenuation
+                    attenuation,
                 });
             }
         }
 
         Some(ScatterRecord {
             scattered: Ray::new(rec.point, reflected, ray.time),
-            attenuation
+            attenuation,
         })
     }
 }

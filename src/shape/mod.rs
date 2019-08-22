@@ -1,14 +1,14 @@
-use crate::Vec3;
-use crate::Ray;
-use crate::Material;
-use crate::accel::AABB;
 use crate::accel::accumulate_aabbs;
+use crate::accel::AABB;
+use crate::Material;
+use crate::Ray;
+use crate::Vec3;
 
-pub use sphere::Sphere;
 pub use moving_sphere::MovingSphere;
+pub use sphere::Sphere;
 
-mod sphere;
 mod moving_sphere;
+mod sphere;
 
 /// record for ray object intersection
 pub struct HitRecord<'a> {
@@ -33,7 +33,7 @@ pub trait Hitable: Sync {
 /// a list of hitable objects
 #[derive(Default)]
 pub struct HitableList<'a> {
-    list: Vec<Box<dyn Hitable + 'a>>
+    list: Vec<Box<dyn Hitable + 'a>>,
 }
 
 impl<'a> HitableList<'a> {
@@ -43,7 +43,7 @@ impl<'a> HitableList<'a> {
     }
 
     /// convert into vector of objects
-    pub fn to_vec(self) -> Vec<Box<dyn Hitable + 'a>> {
+    pub fn into_vec(self) -> Vec<Box<dyn Hitable + 'a>> {
         self.list
     }
 }

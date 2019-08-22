@@ -1,25 +1,28 @@
-use crate::{Vec3, Ray, Hitable, Material};
 use crate::shape::{HitRecord, AABB};
+use crate::{Hitable, Material, Ray, Vec3};
 
 /// sphere hitable object
-pub struct Sphere {
+pub struct Sphere<T> {
     center: Vec3,
     radius: f32,
-    material: Box<dyn Material>,
+    material: Box<T>,
 }
 
-impl Sphere {
+impl<T> Sphere<T> {
     /// construct new sphere with `center` and `radius`
-    pub fn new(center: Vec3, radius: f32, material: Box<dyn Material>) -> Self {
+    pub fn new(center: Vec3, radius: f32, material: T) -> Self {
         Sphere {
             center,
             radius,
-            material
+            material: Box::new(material),
         }
     }
 }
 
-impl Hitable for Sphere {
+impl<T> Hitable for Sphere<T>
+where
+    T: Material,
+{
     fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         let oc = ray.origin - self.center;
         let coeff_a = ray.direction.dot(ray.direction);
@@ -34,7 +37,7 @@ impl Hitable for Sphere {
                     t: temp,
                     point: ray.point_at(temp),
                     normal: (ray.point_at(temp) - self.center) / self.radius,
-                    material: self.material.as_ref()
+                    material: self.material.as_ref(),
                 });
             }
 
@@ -44,7 +47,7 @@ impl Hitable for Sphere {
                     t: temp,
                     point: ray.point_at(temp),
                     normal: (ray.point_at(temp) - self.center) / self.radius,
-                    material: self.material.as_ref()
+                    material: self.material.as_ref(),
                 });
             }
         }

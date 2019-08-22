@@ -1,4 +1,4 @@
-use crate::{Vec3, Ray};
+use crate::{Ray, Vec3};
 
 /// axis-aligned bounding box
 #[derive(Clone)]
@@ -19,7 +19,7 @@ impl AABB {
         // https://medium.com/@bromanz/another-view-on-the-classic-ray-aabb-intersection-algorithm-for-bvh-traversal-41125138b525
         let mut t_min = t_min;
         let mut t_max = t_max;
-        
+
         for i in 0..3 {
             let invd = ray.direction[i].recip();
 
@@ -52,7 +52,7 @@ impl AABB {
                 a0.max.x.max(a1.max.x),
                 a0.max.y.max(a1.max.y),
                 a0.max.z.max(a1.max.z),
-            )
+            ),
         )
     }
 }

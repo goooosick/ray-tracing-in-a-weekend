@@ -3,18 +3,18 @@
 /// RGB color ([0.0-1.0] each channel)
 pub type Color = vec::Vec3;
 
+pub use camera::Camera;
 pub use ray::Ray;
 pub use vec::Vec3;
-pub use camera::Camera;
 
 #[doc(inline)]
 pub use material::Material;
 #[doc(inline)]
 pub use shape::Hitable;
 
-mod vec;
-mod ray;
 mod camera;
+mod ray;
+mod vec;
 
 pub mod accel;
 pub mod material;

@@ -1,20 +1,25 @@
-use crate::{Vec3, Ray, Hitable, Material};
 use crate::shape::{HitRecord, AABB};
+use crate::{Hitable, Material, Ray, Vec3};
 
 /// a moving sphere hitable object
-pub struct MovingSphere {
+pub struct MovingSphere<T> {
     center: Vec3,
     offset: Vec3,
     time_start: f32,
     time_interval: f32,
     radius: f32,
-    material: Box<dyn Material>,
+    material: Box<T>,
 }
 
-impl MovingSphere {
+impl<T> MovingSphere<T> {
     /// construct new sphere with `center` period and `radius`
-    pub fn new(center: Vec3, offset: Vec3, time_start: f32, time_interval: f32,
-        radius: f32, material: Box<dyn Material>
+    pub fn new(
+        center: Vec3,
+        offset: Vec3,
+        time_start: f32,
+        time_interval: f32,
+        radius: f32,
+        material: T,
     ) -> Self {
         MovingSphere {
             center,
@@ -22,7 +27,7 @@ impl MovingSphere {
             time_start,
             time_interval,
             radius,
-            material
+            material: Box::new(material),
         }
     }
 
@@ -32,7 +37,10 @@ impl MovingSphere {
     }
 }
 
-impl Hitable for MovingSphere {
+impl<T> Hitable for MovingSphere<T>
+where
+    T: Material,
+{
     fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         let oc = ray.origin - self.center(ray.time);
         let coeff_a = ray.direction.dot(ray.direction);
@@ -47,7 +55,7 @@ impl Hitable for MovingSphere {
                     t: temp,
                     point: ray.point_at(temp),
                     normal: (ray.point_at(temp) - self.center) / self.radius,
-                    material: self.material.as_ref()
+                    material: self.material.as_ref(),
                 });
             }
 
@@ -57,7 +65,7 @@ impl Hitable for MovingSphere {
                     t: temp,
                     point: ray.point_at(temp),
                     normal: (ray.point_at(temp) - self.center) / self.radius,
-                    material: self.material.as_ref()
+                    material: self.material.as_ref(),
                 });
             }
         }

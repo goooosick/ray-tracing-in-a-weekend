@@ -1,13 +1,8 @@
 use std::ops::{
-    Neg,
-    Add, AddAssign,
-    Sub, SubAssign,
-    Mul, MulAssign,
-    Div, DivAssign,
-    Index, IndexMut
+    Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
 };
 
-/// three dimension vector 
+/// three dimension vector
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Vec3 {
     pub x: f32,
@@ -46,9 +41,7 @@ impl Vec3 {
 
     /// squared L2 norm of vector (squared length)
     pub fn norm_squared(&self) -> f32 {
-        self.x * self.x +
-        self.y * self.y +
-        self.z * self.z
+        self.x * self.x + self.y * self.y + self.z * self.z
     }
 
     /// normalize vector to unit length
@@ -72,9 +65,7 @@ impl Vec3 {
 
     /// dot product
     pub fn dot(&self, other: Vec3) -> f32 {
-        self.x * other.x + 
-        self.y * other.y +
-        self.z * other.z
+        self.x * other.x + self.y * other.y + self.z * other.z
     }
 
     /// cross product
@@ -294,7 +285,7 @@ impl IndexMut<usize> for Vec3 {
 }
 
 impl std::iter::Sum for Vec3 {
-    fn sum<I: Iterator<Item=Vec3>>(iter: I) -> Vec3 {
+    fn sum<I: Iterator<Item = Vec3>>(iter: I) -> Vec3 {
         iter.fold(Vec3::zero(), |a, b| a + b)
     }
 }
@@ -307,7 +298,7 @@ mod test {
     fn test_add() {
         let v1 = Vec3::new(1.0, 2.0, 3.0);
         let v2 = Vec3::new(2.0, 3.0, 4.0);
-        let r  = Vec3::new(3.0, 5.0, 7.0);
+        let r = Vec3::new(3.0, 5.0, 7.0);
         assert_eq!(r, v1 + v2);
     }
 
@@ -315,7 +306,7 @@ mod test {
     fn test_sub() {
         let v1 = Vec3::new(1.0, 2.0, 3.0);
         let v2 = Vec3::new(2.0, 3.0, 4.0);
-        let r  = Vec3::new(-1.0, -1.0, -1.0);
+        let r = Vec3::new(-1.0, -1.0, -1.0);
         assert_eq!(r, v1 - v2);
     }
 

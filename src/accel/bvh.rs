@@ -1,6 +1,6 @@
+use crate::accel::{accumulate_aabbs, AABB};
+use crate::shape::{HitRecord, Hitable, HitableList};
 use crate::Ray;
-use crate::accel::{AABB, accumulate_aabbs};
-use crate::shape::{Hitable, HitableList, HitRecord};
 
 /// acceleration structure, bounding volume hierarchy
 pub struct BVH<'a> {
@@ -11,7 +11,7 @@ pub struct BVH<'a> {
 impl<'a> BVH<'a> {
     /// consturct BVH from hitable list
     pub fn from_list(hlist: HitableList<'a>, t0: f32, t1: f32) -> Self {
-        BVH::new(hlist.to_vec(), t0, t1)
+        BVH::new(hlist.into_vec(), t0, t1)
     }
 
     /// recursive consturct BVH
@@ -20,14 +20,12 @@ impl<'a> BVH<'a> {
 
         // sort by random axis
         let axis = (3.0 * thread_rng().gen::<f32>()) as usize;
-        list.sort_by(|a, b| {
-            match (a.bounding_box(t0, t1), b.bounding_box(t0, t1)) {
-                (Some(a), Some(b)) => {
-                    a.min[axis].partial_cmp(&b.min[axis]).unwrap()
-                }
-                _ => panic!("no bounding box on object")
-            }
-        });
+        list.sort_by(
+            |a, b| match (a.bounding_box(t0, t1), b.bounding_box(t0, t1)) {
+                (Some(a), Some(b)) => a.min[axis].partial_cmp(&b.min[axis]).unwrap(),
+                _ => panic!("no bounding box on object"),
+            },
+        );
 
         let nodes = if list.len() <= 2 {
             list
@@ -41,7 +39,7 @@ impl<'a> BVH<'a> {
 
         match accumulate_aabbs(&nodes, t0, t1) {
             Some(bbox) => BVH { nodes, bbox },
-            None => panic!("no bounding box on object")
+            None => panic!("no bounding box on object"),
         }
     }
 }

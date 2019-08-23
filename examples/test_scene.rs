@@ -21,103 +21,18 @@ fn color(ray: &Ray, hitable: &dyn Hitable, depth: u32) -> Color {
     }
 }
 
-#[inline]
-fn randf() -> f32 {
-    thread_rng().gen::<f32>()
-}
-
-fn build_scene(n: i32) -> HitableList<'static> {
-    assert!(n > 0);
-
+fn two_perlin_sphere() -> HitableList<'static> {
     let mut list = HitableList::default();
 
     list.push(Sphere::new(
         Vec3::new(0.0, -1000.0, 0.0),
         1000.0,
-        Lambertian::new(CheckerTexture(
-            ConstantTexture(Vec3::new(0.2, 0.3, 0.1)),
-            ConstantTexture(Vec3::new(0.9, 0.9, 0.9)),
-        )),
-    ));
-
-    for i in -n..n {
-        for j in -n..n {
-            let prob = randf();
-            let center = Vec3::new(i as f32 + 0.9 * randf(), 0.2, j as f32 + 0.9 * randf());
-
-            if (center - Vec3::new(4.0, 0.2, 0.0)).norm() > 0.9 {
-                if prob < 0.8 {
-                    // diffuse
-                    list.push(MovingSphere::new(
-                        center,
-                        Vec3::new(0.0, 0.5 * randf(), 0.0),
-                        0.0,
-                        1.0,
-                        0.2,
-                        Lambertian::new(ConstantTexture(Vec3::new(
-                            randf() * randf(),
-                            randf() * randf(),
-                            randf() * randf(),
-                        ))),
-                    ));
-                } else if prob < 0.95 {
-                    // metal
-                    list.push(Sphere::new(
-                        center,
-                        0.2,
-                        Metal::new(
-                            Vec3::new(
-                                0.5 * (1.0 + randf()),
-                                0.5 * (1.0 + randf()),
-                                0.5 * (1.0 + randf()),
-                            ),
-                            0.5 * randf(),
-                        ),
-                    ));
-                } else {
-                    // glass
-                    list.push(Sphere::new(center, 0.2, Dielectric::new(1.5)));
-                }
-            }
-        }
-    }
-
-    list.push(Sphere::new(
-        Vec3::new(0.0, 1.0, 0.0),
-        1.0,
-        Dielectric::new(1.5),
+        Lambertian::new(NoiseTexture(5.0)),
     ));
     list.push(Sphere::new(
-        Vec3::new(-4.0, 1.0, 0.0),
-        1.0,
-        Lambertian::new(ConstantTexture(Vec3::new(0.4, 0.2, 0.1))),
-    ));
-    list.push(Sphere::new(
-        Vec3::new(4.0, 1.0, 0.0),
-        1.0,
-        Metal::new(Vec3::new(0.7, 0.6, 0.5), 0.0),
-    ));
-
-    list
-}
-
-fn two_sphere() -> HitableList<'static> {
-    let mut list = HitableList::default();
-
-    let checker = CheckerTexture(
-        ConstantTexture(Vec3::new(0.2, 0.3, 0.1)),
-        ConstantTexture(Vec3::new(0.9, 0.9, 0.9)),
-    );
-
-    list.push(Sphere::new(
-        Vec3::new(0.0, 10.0, 0.0),
-        10.0,
-        Lambertian::new(checker.clone()),
-    ));
-    list.push(Sphere::new(
-        Vec3::new(0.0, -10.0, 0.0),
-        10.0,
-        Lambertian::new(checker.clone()),
+        Vec3::new(0.0, 2.0, 0.0),
+        2.0,
+        Lambertian::new(NoiseTexture(5.0)),
     ));
 
     list
@@ -141,7 +56,7 @@ fn main() {
         .apture(apture, focus_dist)
         .period(time_start, time_end);
 
-    let world = BVH::from_list(two_sphere(), time_start, time_end);
+    let world = BVH::from_list(two_perlin_sphere(), time_start, time_end);
 
     let mut imgbuf = image::ImageBuffer::new(nx, ny);
 

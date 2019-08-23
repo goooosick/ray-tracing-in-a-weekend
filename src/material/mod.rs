@@ -4,6 +4,7 @@ use crate::{Ray, Vec3};
 
 pub use texture::*;
 
+mod noise;
 mod texture;
 
 /// reflect incident ray `v` with surface normal `n`

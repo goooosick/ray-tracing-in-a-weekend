@@ -1,9 +1,11 @@
 use crate::random_in_unit_sphere;
 use crate::shape::HitRecord;
-use crate::{Ray, Vec3};
+use crate::{Color, Ray, Vec3};
 
+pub use diffuse_light::*;
 pub use texture::*;
 
+mod diffuse_light;
 mod noise;
 mod texture;
 
@@ -36,6 +38,11 @@ pub struct ScatterRecord {
 pub trait Material: Sync {
     /// material scatters incident ray
     fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<ScatterRecord>;
+    /// material emitted light
+    #[allow(unused_variables)]
+    fn emitted(&self, u: f32, v: f32, point: Vec3) -> Color {
+        Color::zero()
+    }
 }
 
 /// lambertian material, scattering ray to random direction and attenuating

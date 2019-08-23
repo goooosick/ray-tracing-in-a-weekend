@@ -6,43 +6,56 @@ use std::time::Instant;
 
 fn color(ray: &Ray, hitable: &dyn Hitable, depth: u32) -> Color {
     if let Some(rec) = hitable.hit(&ray, 0.001, std::f32::MAX) {
+        let emitted = rec.material.emitted(rec.uv.0, rec.uv.1, rec.point);
+
         if depth < 50 {
             if let Some(srec) = rec.material.scatter(ray, &rec) {
-                return srec.attenuation * color(&srec.scattered, hitable, depth + 1);
+                return emitted + srec.attenuation * color(&srec.scattered, hitable, depth + 1);
             }
         }
 
-        Vec3::zero()
+        emitted
     } else {
-        let unit_dir = ray.direction.normalize();
-        let t = 0.5 * (unit_dir.y + 1.0);
-
-        Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + Vec3::new(0.5, 0.7, 1.0) * t
+        Vec3::zero()
     }
 }
 
-fn two_sphere() -> HitableList<'static> {
+fn cornell_box() -> HitableList<'static> {
     let mut list = HitableList::default();
 
-    let image = load_image("res/venusmap.jpg");
+    let light = DiffuseLight::new(ConstantTexture(Vec3::new(15.0, 15.0, 15.0)));
+    let white = Lambertian::new(ConstantTexture(Vec3::new(0.73, 0.73, 0.73)));
+    let green = Lambertian::new(ConstantTexture(Vec3::new(0.12, 0.45, 0.15)));
+    let red = Lambertian::new(ConstantTexture(Vec3::new(0.65, 0.05, 0.05)));
 
-    list.push(Sphere::new(
-        Vec3::new(0.0, -1000.0, 0.0),
-        1000.0,
-        Lambertian::new(NoiseTexture(5.0)),
-    ));
-    list.push(Sphere::new(
-        Vec3::new(0.0, 2.0, 0.0),
-        2.0,
-        Lambertian::new(ImageTexture::new(image)),
-    ));
+    list.push(XzRect::new((213.0, 343.0), (227.0, 332.0), 554.0, light));
+    list.push(XzRect::new((0.0, 555.0), (0.0, 555.0), 0.0, white.clone()));
+    list.push(YzRect::new((0.0, 555.0), (0.0, 555.0), 0.0, red));
+    list.push(FlipNormal(YzRect::new(
+        (0.0, 555.0),
+        (0.0, 555.0),
+        555.0,
+        green,
+    )));
+    list.push(FlipNormal(XzRect::new(
+        (0.0, 555.0),
+        (0.0, 555.0),
+        555.0,
+        white.clone(),
+    )));
+    list.push(FlipNormal(XyRect::new(
+        (0.0, 555.0),
+        (0.0, 555.0),
+        555.0,
+        white.clone(),
+    )));
 
     list
 }
 
 fn main() {
-    let nx = 500;
-    let ny = 200;
+    let nx = 800;
+    let ny = 800;
     let ns = 100;
 
     let time_start = 0.0;
@@ -50,15 +63,15 @@ fn main() {
     let apture = 0.0;
     let focus_dist = 10.0;
 
-    let look_from = Vec3::new(13.0, 2.0, 3.0);
-    let look_at = Vec3::new(0.0, 0.0, 0.0);
+    let look_from = Vec3::new(278.0, 278.0, -800.0);
+    let look_at = Vec3::new(278.0, 278.0, 0.0);
     let view_up = Vec3::new(0.0, 1.0, 0.0);
 
-    let cam = Camera::new(look_from, look_at, view_up, 20.0, nx as f32 / ny as f32)
+    let cam = Camera::new(look_from, look_at, view_up, 40.0, nx as f32 / ny as f32)
         .apture(apture, focus_dist)
         .period(time_start, time_end);
 
-    let world = BVH::from_list(two_sphere(), time_start, time_end);
+    let world = BVH::from_list(cornell_box(), time_start, time_end);
 
     let mut imgbuf = image::ImageBuffer::new(nx, ny);
 

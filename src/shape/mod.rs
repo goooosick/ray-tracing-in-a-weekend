@@ -5,9 +5,11 @@ use crate::Ray;
 use crate::Vec3;
 
 pub use moving_sphere::MovingSphere;
+pub use rect::*;
 pub use sphere::Sphere;
 
 mod moving_sphere;
+mod rect;
 mod sphere;
 
 /// record for ray object intersection
@@ -59,7 +61,26 @@ impl<'a> Hitable for HitableList<'a> {
             .min_by(|h1, h2| h1.t.partial_cmp(&h2.t).unwrap())
     }
 
-    fn bounding_box(&self, t_min: f32, t_max: f32) -> Option<AABB> {
-        accumulate_aabbs(&self.list, t_min, t_max)
+    fn bounding_box(&self, t0: f32, t1: f32) -> Option<AABB> {
+        accumulate_aabbs(&self.list, t0, t1)
+    }
+}
+
+/// hitable wrapper flipping normals
+pub struct FlipNormal<T>(pub T);
+
+impl<T> Hitable for FlipNormal<T>
+where
+    T: Hitable,
+{
+    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
+        self.0.hit(ray, t_min, t_max).map(|mut rec| {
+            rec.normal = -rec.normal;
+            rec
+        })
+    }
+
+    fn bounding_box(&self, t0: f32, t1: f32) -> Option<AABB> {
+        self.0.bounding_box(t0, t1)
     }
 }

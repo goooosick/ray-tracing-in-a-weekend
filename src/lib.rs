@@ -58,3 +58,22 @@ pub fn random_in_unit_disk() -> Vec3 {
         }
     }
 }
+
+/// load image file, convert to `Color` matrix
+pub fn load_image<T: AsRef<str>>(path: T) -> Vec<Vec<Color>> {
+    use image::GenericImageView;
+
+    let img = image::open(path.as_ref()).unwrap();
+    let dim = img.dimensions();
+
+    let mut image = vec![vec![Color::zero(); dim.1 as usize]; dim.0 as usize];
+    img.pixels().for_each(|(i, j, pixel)| {
+        image[i as usize][j as usize] = Color::new(
+            f32::from(pixel[0]),
+            f32::from(pixel[1]),
+            f32::from(pixel[2]),
+        ) / 255.0;
+    });
+
+    image
+}

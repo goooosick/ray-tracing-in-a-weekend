@@ -33,21 +33,27 @@ where
         if discriminant > 0.0 {
             let temp = (-coeff_b - discriminant.sqrt()) / coeff_a;
             if temp < t_max && temp > t_min {
+                let point = ray.point_at(temp);
+                let normal = (point - self.center) / self.radius;
                 return Some(HitRecord {
                     t: temp,
-                    point: ray.point_at(temp),
-                    normal: (ray.point_at(temp) - self.center) / self.radius,
+                    point,
+                    normal,
                     material: self.material.as_ref(),
+                    uv: get_sphere_uv(normal),
                 });
             }
 
             let temp = (-coeff_b + discriminant.sqrt()) / coeff_a;
             if temp < t_max && temp > t_min {
+                let point = ray.point_at(temp);
+                let normal = (point - self.center) / self.radius;
                 return Some(HitRecord {
                     t: temp,
-                    point: ray.point_at(temp),
-                    normal: (ray.point_at(temp) - self.center) / self.radius,
+                    point,
+                    normal,
                     material: self.material.as_ref(),
+                    uv: get_sphere_uv(normal),
                 });
             }
         }
@@ -61,4 +67,13 @@ where
             self.center + Vec3::new(self.radius, self.radius, self.radius),
         ))
     }
+}
+
+pub fn get_sphere_uv(point: Vec3) -> (f32, f32) {
+    let phi = point.z.atan2(point.x);
+    let theta = point.y.asin();
+    (
+        0.5 - phi / (2.0 * std::f32::consts::PI),
+        0.5 + theta / std::f32::consts::PI,
+    )
 }

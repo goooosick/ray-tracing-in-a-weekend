@@ -63,7 +63,7 @@ where
 
         Some(ScatterRecord {
             scattered: Ray::new(rec.point, target - rec.point, ray.time),
-            attenuation: self.albedo.value(0.0, 0.0, rec.point),
+            attenuation: self.albedo.value(rec.uv.0, rec.uv.1, rec.point),
         })
     }
 }

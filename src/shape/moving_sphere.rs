@@ -1,3 +1,4 @@
+use super::sphere::get_sphere_uv;
 use crate::shape::{HitRecord, AABB};
 use crate::{Hitable, Material, Ray, Vec3};
 
@@ -51,21 +52,27 @@ where
         if discriminant > 0.0 {
             let temp = (-coeff_b - discriminant.sqrt()) / coeff_a;
             if temp < t_max && temp > t_min {
+                let point = ray.point_at(temp);
+                let normal = (point - self.center) / self.radius;
                 return Some(HitRecord {
                     t: temp,
-                    point: ray.point_at(temp),
-                    normal: (ray.point_at(temp) - self.center) / self.radius,
+                    point,
+                    normal,
                     material: self.material.as_ref(),
+                    uv: get_sphere_uv(normal),
                 });
             }
 
             let temp = (-coeff_b + discriminant.sqrt()) / coeff_a;
             if temp < t_max && temp > t_min {
+                let point = ray.point_at(temp);
+                let normal = (point - self.center) / self.radius;
                 return Some(HitRecord {
                     t: temp,
-                    point: ray.point_at(temp),
-                    normal: (ray.point_at(temp) - self.center) / self.radius,
+                    point,
+                    normal,
                     material: self.material.as_ref(),
+                    uv: get_sphere_uv(normal),
                 });
             }
         }

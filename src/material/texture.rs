@@ -44,3 +44,33 @@ impl Texture for NoiseTexture {
         Vec3::unit() * (1.0 + (10.0 * Perlin::turb(point) + self.0 * point.z).sin()) * 0.5
     }
 }
+
+/// image texture
+pub struct ImageTexture {
+    image: Vec<Vec<Color>>,
+    width: usize,
+    height: usize,
+}
+
+impl ImageTexture {
+    /// construct new ImageTexture fron image data
+    pub fn new(image: Vec<Vec<Color>>) -> Self {
+        let width = image.len();
+        let height = image[0].len();
+        ImageTexture {
+            image,
+            width,
+            height,
+        }
+    }
+}
+
+impl Texture for ImageTexture {
+    fn value(&self, u: f32, v: f32, _: Vec3) -> Color {
+        let x = (u * self.width as f32) as usize;
+        let y = ((1.0 - v) * self.height as f32) as usize;
+        let x = x.max(0).min(self.width - 1);
+        let y = y.max(0).min(self.height - 1);
+        self.image[x][y]
+    }
+}

@@ -20,6 +20,8 @@ pub struct HitRecord<'a> {
     pub normal: Vec3,
     /// material pointer
     pub material: &'a dyn Material,
+    /// uv value on object
+    pub uv: (f32, f32),
 }
 
 /// hitable object trait

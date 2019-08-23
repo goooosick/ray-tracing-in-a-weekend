@@ -21,8 +21,10 @@ fn color(ray: &Ray, hitable: &dyn Hitable, depth: u32) -> Color {
     }
 }
 
-fn two_perlin_sphere() -> HitableList<'static> {
+fn two_sphere() -> HitableList<'static> {
     let mut list = HitableList::default();
+
+    let image = load_image("res/venusmap.jpg");
 
     list.push(Sphere::new(
         Vec3::new(0.0, -1000.0, 0.0),
@@ -32,7 +34,7 @@ fn two_perlin_sphere() -> HitableList<'static> {
     list.push(Sphere::new(
         Vec3::new(0.0, 2.0, 0.0),
         2.0,
-        Lambertian::new(NoiseTexture(5.0)),
+        Lambertian::new(ImageTexture::new(image)),
     ));
 
     list
@@ -56,7 +58,7 @@ fn main() {
         .apture(apture, focus_dist)
         .period(time_start, time_end);
 
-    let world = BVH::from_list(two_perlin_sphere(), time_start, time_end);
+    let world = BVH::from_list(two_sphere(), time_start, time_end);
 
     let mut imgbuf = image::ImageBuffer::new(nx, ny);
 

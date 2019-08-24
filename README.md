@@ -8,6 +8,7 @@ It provides examples for each chapter (3 - 12), simply do:
 ```bash
 cargo run --release --example ch12
 ```
+`TheNext` book codes are on the `the_next` branch.
 
 ### Sources
 

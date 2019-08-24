@@ -1,6 +1,8 @@
 use rand::prelude::*;
 use rayon::prelude::*;
-use rtw::{accel::BVH, material::*, shape::*, *};
+use rtw::material::*;
+use rtw::shape::{transform::*, *};
+use rtw::{accel::BVH, *};
 
 use std::time::Instant;
 
@@ -50,13 +52,38 @@ fn cornell_box() -> HitableList<'static> {
         white.clone(),
     )));
 
+    list.push(Translate(
+        Rotate::around(
+            Axis::Y,
+            BBox::new(
+                Vec3::new(0.0, 0.0, 0.0),
+                Vec3::new(165.0, 165.0, 165.0),
+                white.clone(),
+            ),
+            -18.0,
+        ),
+        Vec3::new(130.0, 0.0, 65.0),
+    ));
+    list.push(Translate(
+        Rotate::around(
+            Axis::Y,
+            BBox::new(
+                Vec3::new(0.0, 0.0, 0.0),
+                Vec3::new(165.0, 330.0, 165.0),
+                white.clone(),
+            ),
+            15.0,
+        ),
+        Vec3::new(265.0, 0.0, 295.0),
+    ));
+
     list
 }
 
 fn main() {
-    let nx = 800;
-    let ny = 800;
-    let ns = 100;
+    let nx = 200;
+    let ny = 200;
+    let ns = 500;
 
     let time_start = 0.0;
     let time_end = 0.0;

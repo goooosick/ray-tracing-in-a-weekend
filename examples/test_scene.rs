@@ -25,12 +25,12 @@ fn color(ray: &Ray, hitable: &dyn Hitable, depth: u32) -> Color {
 fn cornell_box() -> HitableList<'static> {
     let mut list = HitableList::default();
 
-    let light = DiffuseLight::new(ConstantTexture(Vec3::new(15.0, 15.0, 15.0)));
+    let light = DiffuseLight::new(ConstantTexture(Vec3::new(7.0, 7.0, 7.0)));
     let white = Lambertian::new(ConstantTexture(Vec3::new(0.73, 0.73, 0.73)));
     let green = Lambertian::new(ConstantTexture(Vec3::new(0.12, 0.45, 0.15)));
     let red = Lambertian::new(ConstantTexture(Vec3::new(0.65, 0.05, 0.05)));
 
-    list.push(XzRect::new((213.0, 343.0), (227.0, 332.0), 554.0, light));
+    list.push(XzRect::new((113.0, 443.0), (127.0, 432.0), 554.0, light));
     list.push(XzRect::new((0.0, 555.0), (0.0, 555.0), 0.0, white.clone()));
     list.push(YzRect::new((0.0, 555.0), (0.0, 555.0), 0.0, red));
     list.push(FlipNormal(YzRect::new(
@@ -52,7 +52,7 @@ fn cornell_box() -> HitableList<'static> {
         white.clone(),
     )));
 
-    list.push(Translate(
+    let lower_box = Translate(
         Rotate::around(
             Axis::Y,
             BBox::new(
@@ -63,8 +63,8 @@ fn cornell_box() -> HitableList<'static> {
             -18.0,
         ),
         Vec3::new(130.0, 0.0, 65.0),
-    ));
-    list.push(Translate(
+    );
+    let higher_box = Translate(
         Rotate::around(
             Axis::Y,
             BBox::new(
@@ -75,6 +75,17 @@ fn cornell_box() -> HitableList<'static> {
             15.0,
         ),
         Vec3::new(265.0, 0.0, 295.0),
+    );
+
+    list.push(ConstantMedium::new(
+        higher_box,
+        0.01,
+        ConstantTexture(Vec3::zero()),
+    ));
+    list.push(ConstantMedium::new(
+        lower_box,
+        0.01,
+        ConstantTexture(Vec3::unit()),
     ));
 
     list

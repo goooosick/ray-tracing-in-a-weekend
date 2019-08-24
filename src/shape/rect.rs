@@ -7,18 +7,13 @@ pub struct XyRect<T> {
     x: (f32, f32),
     y: (f32, f32),
     z: f32,
-    material: Box<T>,
+    material: T,
 }
 
 impl<T> XyRect<T> {
     /// construct new rectangle with x(min, max), y(min, max), and z
-    pub fn new(x: (f32, f32), y: (f32, f32), z: f32, mat: T) -> Self {
-        XyRect {
-            x,
-            y,
-            z,
-            material: Box::new(mat),
-        }
+    pub fn new(x: (f32, f32), y: (f32, f32), z: f32, material: T) -> Self {
+        XyRect { x, y, z, material }
     }
 }
 
@@ -37,7 +32,7 @@ where
                     t,
                     point: ray.point_at(t),
                     normal: Vec3::new(0.0, 0.0, 1.0),
-                    material: self.material.as_ref(),
+                    material: &self.material,
                     uv: (
                         (x - self.x.0) / (self.x.1 - self.x.0),
                         (x - self.y.0) / (self.y.1 - self.y.0),
@@ -62,18 +57,13 @@ pub struct XzRect<T> {
     x: (f32, f32),
     y: f32,
     z: (f32, f32),
-    material: Box<T>,
+    material: T,
 }
 
 impl<T> XzRect<T> {
     /// construct new rectangle with x(min, max), z(min, max), and y
-    pub fn new(x: (f32, f32), z: (f32, f32), y: f32, mat: T) -> Self {
-        XzRect {
-            x,
-            y,
-            z,
-            material: Box::new(mat),
-        }
+    pub fn new(x: (f32, f32), z: (f32, f32), y: f32, material: T) -> Self {
+        XzRect { x, y, z, material }
     }
 }
 
@@ -92,7 +82,7 @@ where
                     t,
                     point: ray.point_at(t),
                     normal: Vec3::new(0.0, 1.0, 0.0),
-                    material: self.material.as_ref(),
+                    material: &self.material,
                     uv: (
                         (x - self.x.0) / (self.x.1 - self.x.0),
                         (z - self.z.0) / (self.z.1 - self.z.0),
@@ -117,18 +107,13 @@ pub struct YzRect<T> {
     x: f32,
     y: (f32, f32),
     z: (f32, f32),
-    material: Box<T>,
+    material: T,
 }
 
 impl<T> YzRect<T> {
     /// construct new rectangle with y(min, max), z(min, max), and x
-    pub fn new(y: (f32, f32), z: (f32, f32), x: f32, mat: T) -> Self {
-        YzRect {
-            x,
-            y,
-            z,
-            material: Box::new(mat),
-        }
+    pub fn new(y: (f32, f32), z: (f32, f32), x: f32, material: T) -> Self {
+        YzRect { x, y, z, material }
     }
 }
 
@@ -147,7 +132,7 @@ where
                     t,
                     point: ray.point_at(t),
                     normal: Vec3::new(1.0, 0.0, 0.0),
-                    material: self.material.as_ref(),
+                    material: &self.material,
                     uv: (
                         (y - self.y.0) / (self.y.1 - self.y.0),
                         (z - self.z.0) / (self.z.1 - self.z.0),

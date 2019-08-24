@@ -2,10 +2,10 @@ use crate::random_in_unit_sphere;
 use crate::shape::HitRecord;
 use crate::{Color, Ray, Vec3};
 
-pub use diffuse_light::*;
+pub use light::*;
 pub use texture::*;
 
-mod diffuse_light;
+mod light;
 mod noise;
 mod texture;
 
@@ -49,15 +49,13 @@ pub trait Material: Sync {
 #[derive(Clone)]
 pub struct Lambertian<T> {
     /// lambertian material attenuation
-    pub albedo: Box<T>,
+    pub albedo: T,
 }
 
 impl<T> Lambertian<T> {
     /// construct new lambertian material
     pub fn new(albedo: T) -> Self {
-        Lambertian {
-            albedo: Box::new(albedo),
-        }
+        Lambertian { albedo }
     }
 }
 
@@ -70,6 +68,32 @@ where
 
         Some(ScatterRecord {
             scattered: Ray::new(rec.point, target - rec.point, ray.time),
+            attenuation: self.albedo.value(rec.uv.0, rec.uv.1, rec.point),
+        })
+    }
+}
+
+/// isotropic material, scattering ray to random direction
+#[derive(Clone)]
+pub struct Isotropic<T> {
+    /// isotropic material attenuation
+    pub albedo: T,
+}
+
+impl<T> Isotropic<T> {
+    /// construct new isotropic material
+    pub fn new(albedo: T) -> Self {
+        Isotropic { albedo }
+    }
+}
+
+impl<T> Material for Isotropic<T>
+where
+    T: Texture,
+{
+    fn scatter(&self, ray: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
+        Some(ScatterRecord {
+            scattered: Ray::new(rec.point, random_in_unit_sphere(), ray.time),
             attenuation: self.albedo.value(rec.uv.0, rec.uv.1, rec.point),
         })
     }

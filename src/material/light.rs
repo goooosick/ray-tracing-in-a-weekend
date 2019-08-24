@@ -6,15 +6,13 @@ use crate::{Color, Ray, Vec3};
 #[derive(Clone)]
 pub struct DiffuseLight<T> {
     /// light emitting texture
-    pub emit: Box<T>,
+    pub emit: T,
 }
 
 impl<T> DiffuseLight<T> {
     /// construct new diffuse light material
     pub fn new(emit: T) -> Self {
-        DiffuseLight {
-            emit: Box::new(emit),
-        }
+        DiffuseLight { emit }
     }
 }
 

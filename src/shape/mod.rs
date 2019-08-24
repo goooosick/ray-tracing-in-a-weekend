@@ -5,12 +5,12 @@ use crate::Ray;
 use crate::Vec3;
 
 pub use bbox::BBox;
-pub use moving_sphere::MovingSphere;
+pub use medium::ConstantMedium;
 pub use rect::*;
-pub use sphere::Sphere;
+pub use sphere::{MovingSphere, Sphere};
 
 mod bbox;
-mod moving_sphere;
+mod medium;
 mod rect;
 mod sphere;
 

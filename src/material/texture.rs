@@ -40,8 +40,8 @@ pub struct NoiseTexture(pub f32);
 impl Texture for NoiseTexture {
     fn value(&self, _: f32, _: f32, point: Vec3) -> Color {
         // Vec3::unit() * (Perlin::noise(point * self.0) + 1.0) * 0.5
-        // Vec3::unit() * (Perlin::turb(point * self.0) + 1.0) * 0.5
-        Vec3::unit() * (1.0 + (10.0 * Perlin::turb(point) + self.0 * point.z).sin()) * 0.5
+        Vec3::unit() * (Perlin::turb(point * self.0) + 1.0) * 0.5
+        // Vec3::unit() * (1.0 + (10.0 * Perlin::turb(point) + self.0 * point.z).sin()) * 0.5
     }
 }
 

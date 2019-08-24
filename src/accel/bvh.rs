@@ -22,7 +22,9 @@ impl<'a> BVH<'a> {
         let axis = (3.0 * thread_rng().gen::<f32>()) as usize;
         list.sort_by(
             |a, b| match (a.bounding_box(t0, t1), b.bounding_box(t0, t1)) {
-                (Some(a), Some(b)) => a.min[axis].partial_cmp(&b.min[axis]).unwrap(),
+                (Some(a), Some(b)) => a.min[axis]
+                    .partial_cmp(&b.min[axis])
+                    .expect("partial cmp failure"),
                 _ => panic!("no bounding box on object"),
             },
         );

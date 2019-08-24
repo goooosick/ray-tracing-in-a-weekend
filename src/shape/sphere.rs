@@ -89,6 +89,7 @@ impl<T> MovingSphere<T> {
         radius: f32,
         material: T,
     ) -> Self {
+        assert!(time_interval != 0.0);
         MovingSphere {
             center,
             offset,
